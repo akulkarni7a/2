@@ -4,6 +4,10 @@ import styled from '@emotion/styled';
 
 import {GrowingInput} from 'sentry/components/growingInput';
 import {TabsContext} from 'sentry/components/tabs';
+import Tooltip from 'sentry/components/tooltip';
+
+const SOFT_CHARACTER_LIMIT = 50;
+const HARD_CHARACTER_LIMIT = 128;
 
 interface EditableTabTitleProps {
   isEditing: boolean;
@@ -40,7 +44,7 @@ function EditableTabTitle({
   const handleOnBlur = (e: React.FocusEvent<HTMLInputElement, Element>) => {
     e.stopPropagation();
     e.preventDefault();
-    const trimmedInputValue = inputValue.trim();
+    let trimmedInputValue = inputValue.trim();
     if (!isEditing) {
       return;
     }
@@ -50,12 +54,15 @@ function EditableTabTitle({
       setIsEditing(false);
       return;
     }
-    if (trimmedInputValue !== label) {
-      onChange(trimmedInputValue);
-      setInputValue(trimmedInputValue);
-    }
-    setIsEditing(false);
-  };
++    if (trimmedInputValue.length > HARD_CHARACTER_LIMIT) {
++      trimmedInputValue = trimmedInputValue.substring(0, HARD_CHARACTER_LIMIT);
++    }
++    if (trimmedInputValue !== label) {
++      onChange(trimmedInputValue);
++      setInputValue(trimmedInputValue);
++    }
++    setIsEditing(false);
++  };
 
   const handleOnKeyDown = (e: React.KeyboardEvent) => {
     if (e.key === 'Enter') {
@@ -81,7 +88,9 @@ function EditableTabTitle({
   }, [isEditing, inputRef]);
 
   const handleOnChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setInputValue(e.target.value);
+    if (e.target.value.length <= HARD_CHARACTER_LIMIT) {
+      setInputValue(e.target.value);
+    }
   };
 
   return isSelected ? (
@@ -103,7 +112,11 @@ function EditableTabTitle({
       }}
     />
   ) : (
-    <div style={{height: '20px'}}>{label}</div>
+    <Tooltip title={label}>
+      <div style={{height: '20px', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap'}}>
+        {label.length > SOFT_CHARACTER_LIMIT ? `${label.substring(0, SOFT_CHARACTER_LIMIT)}...` : label}
+      </div>
+    </Tooltip>
   );
 }
 

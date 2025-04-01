@@ -177,11 +177,7 @@ export const Tab = forwardRef(
         borderStyle={borderStyle}
         variant={variant}
       >
-        {rendered && (rendered.length > 128 ? (
-          <span title={rendered}>{rendered.substring(0, 128)}...</span>
-        ) : rendered.length > 50 ? (
-          <span title={rendered}>{rendered.substring(0, 50)}...</span>
-        ) : rendered)}
+        {rendered}
       </BaseTab>
     );
   }

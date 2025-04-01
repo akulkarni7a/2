@@ -252,37 +252,4 @@ describe('Tabs', () => {
       'true'
     );
   });
-
-  it('truncates long tab titles and adds tooltip', () => {
-    const longTitle = 'This is a very long tab title that exceeds the 50 character limit and also the 128 character hard limit.';
-    const mediumTitle = 'This is a tab title between 50 and 128 characters.';
-    const shortTitle = 'Short Title';
-
-    render(
-      <Tabs>
-        <TabList>
-          <TabList.Item key="long" >{longTitle}</TabList.Item>
-          <TabList.Item key="medium">{mediumTitle}</TabList.Item>
-          <TabList.Item key="short">{shortTitle}</TabList.Item>
-        </TabList>
-        <TabPanels>
-          <TabPanels.Item key="long">Long Content</TabPanels.Item>
-          <TabPanels.Item key="medium">Medium Content</TabPanels.Item>
-          <TabPanels.Item key="short">Short Content</TabPanels.Item>
-        </TabPanels>
-      </Tabs>
-    );
-
-    const longTab = screen.getByRole('tab', {name: `${longTitle.substring(0, 128)}...`});
-    expect(longTab).toHaveTextContent(`${longTitle.substring(0, 128)}...`);
-    expect(longTab).toHaveAttribute('title', longTitle);
-
-    const mediumTab = screen.getByRole('tab', {name: `${mediumTitle.substring(0, 50)}...`});
-    expect(mediumTab).toHaveTextContent(`${mediumTitle.substring(0, 50)}...`);
-    expect(mediumTab).toHaveAttribute('title', mediumTitle);
-
-    const shortTab = screen.getByRole('tab', {name: shortTitle});
-    expect(shortTab).toHaveTextContent(shortTitle);
-    expect(shortTab).not.toHaveAttribute('title');
-  });
 });
